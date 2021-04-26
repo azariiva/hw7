@@ -1,0 +1,1 @@
+This lexer tokenizes everything from input stream. Store everything in vector.
