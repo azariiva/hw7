@@ -1,0 +1,1 @@
+This tokenizer returns tokens from get_token one by one untill input stream is not empty.
