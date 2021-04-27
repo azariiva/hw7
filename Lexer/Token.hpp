@@ -11,7 +11,6 @@ namespace lex {
         typedef enum
         {
             NONE,
-            STAR,
             ID,
             NUMBER,
             SYMBOL,
@@ -37,6 +36,7 @@ namespace lex {
     class Symbol : public Token {
     public:
         typedef enum {
+            NONE,
             STAR = '*',
             OPENBR_1 = '(',
             CLOSEBR_1 = ')',
@@ -50,6 +50,7 @@ namespace lex {
         Symbol(t_type type, size_t row, size_t col);
         const std::string &text_repr() const;
         static bool is_symbol(int c);
+        t_type type() const;
 
     private:
         static const std::map<Symbol::t_type,std::string > m_text_repr;
@@ -68,6 +69,7 @@ namespace lex {
         Keyword(t_type type, size_t row, size_t col);
         const std::string &text_repr() const;
         static const std::string &text_repr(t_type type);
+        t_type type() const;
 
     private:
         static const std::map<Keyword::t_type,std::string > m_text_repr;

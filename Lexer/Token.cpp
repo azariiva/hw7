@@ -8,7 +8,6 @@ using namespace lex;
 */
 const std::map<Token::t_type,std::string> Token::m_names = {
     {NONE, "unknown"},
-    {STAR, "star"},
     {ID, "identifier"},
     {NUMBER, "number"},
     {SYMBOL, "symbol"},
@@ -101,3 +100,12 @@ const std::string &Number::text_repr() const {
 unsigned long Number::val() const {
     return m_val;
 }
+
+Symbol::t_type Symbol::type() const {
+    return m_type;
+}
+
+Keyword::t_type Keyword::type() const {
+    return m_type;
+}
+

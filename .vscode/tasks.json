@@ -9,8 +9,11 @@
                 "-g",
                 "${file}",
                 "${fileDirname}/Lexer/*.cpp",
+                "${fileDirname}/Parser/*.cpp",
                 "-I",
                 "${fileDirname}/Lexer",
+                "-I",
+                "${fileDirname}/Parser/",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],

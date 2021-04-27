@@ -7,25 +7,23 @@
 
 using namespace lex;
 
-Lexer::Lexer() : m_state(S), m_row(0), m_col(0), m_first_col(0) {}
+Lexer::Lexer() : m_token(NULL), m_state(S), m_row(0), m_col(0), m_first_col(0), m_c(0) {}
 
 Lexer::~Lexer() {
     clear();
 }
 
-void Lexer::print_tokens() {
-    for (std::vector<Token *>::const_iterator it = m_tokens.begin(); it != m_tokens.end(); ++it)
-        std::cout << std::left << std::setw(20) << (*it)->Token::text_repr() << " [" << (*it)->text_repr() << "] "
-                  << "at (" << (*it)->row() << "; " << (*it)->col() << ")\n";
-}
-
-void Lexer::tokenize(std::ifstream &in) {
-    m_str_lex.clear();
-    m_state = S;
-    while (in.get(m_c))
+Token *Lexer::get_token(std::ifstream &in) {
+    m_token = NULL;
+    if (m_c)
         state_chooser();
-    m_c = '\n';
-    state_chooser();
+    while (in.get(m_c) && m_token == NULL)
+        state_chooser();
+    if (m_token == NULL) {
+        m_c = '\n';
+        state_chooser();
+    }
+    return m_token;
 }
 
 void Lexer::state_chooser() {
@@ -113,10 +111,10 @@ void Lexer::state_symbol() {
         type = Symbol::SEMICOLON;
         break;
     default:
-        // unreachable
+        type = Symbol::NONE;
         break;
     }
-    m_tokens.push_back(new Symbol(type, m_row, m_first_col));
+    m_token = new Symbol(type, m_row, m_first_col);
     m_str_lex.clear();
     m_state = S;
     state_s();
@@ -127,7 +125,7 @@ void Lexer::state_id() {
         m_str_lex += m_c;
         m_col++;
     } else {
-        m_tokens.push_back(new Identifier(m_row, m_first_col, m_str_lex));
+        m_token = new Identifier(m_row, m_first_col, m_str_lex);
         m_str_lex.clear();
         m_state = S;
         state_s();
@@ -141,7 +139,7 @@ void Lexer::state_keyword() {
 
     if (m_state_idx == text_repr_len) {
         if (!(m_c == '_' || std::isalnum(m_c))) {
-            m_tokens.push_back(new Keyword(type, m_row, m_first_col));
+            m_token = new Keyword(type, m_row, m_first_col);
             m_str_lex.clear();
             m_state = S;
             state_s();
@@ -162,7 +160,7 @@ void Lexer::state_number() {
         m_str_lex += m_c;
         m_col++;
     } else {
-        m_tokens.push_back(new Number(m_row, m_first_col, std::strtoul(m_str_lex.c_str(), NULL, 0)));
+        m_token = new Number(m_row, m_first_col, std::strtoul(m_str_lex.c_str(), NULL, 0));
         m_str_lex.clear();
         m_state = S;
         state_s();
@@ -173,7 +171,5 @@ void Lexer::clear() {
     m_state = S;
     m_row = m_col = m_first_col = 0;
     m_str_lex.clear();
-    for (std::vector<Token *>::const_iterator it = m_tokens.begin(); it != m_tokens.end(); ++it) {
-        delete *it;
-    }
+    m_token = NULL;
 }

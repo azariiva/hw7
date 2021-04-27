@@ -11,9 +11,7 @@ namespace lex {
     public:
         Lexer();
         ~Lexer();
-        void print_tokens();
-        void tokenize(const std::string &fname);
-        void tokenize(std::ifstream &in);
+        Token *get_token(std::ifstream &in);
         void clear();
 
     private:
@@ -27,6 +25,7 @@ namespace lex {
 
     private:
         typedef enum {
+            READ,
             S,
             ID,
             NUMBER,
@@ -34,8 +33,7 @@ namespace lex {
             SYMBOL
         } t_state;
 
-        std::string m_fname;
-        std::vector<Token *> m_tokens;
+        Token *m_token;
         t_state m_state;
         unsigned m_state_idx;
         size_t m_row;
